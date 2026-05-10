@@ -14,7 +14,8 @@ const EditableTable = ({columns, rows}) => {
     width: 0,
     height: 0,
     rowIndex: -1,
-    columnIndex: -1
+    columnIndex: -1,
+    isEditing: false
   })
 
   const provider = {
@@ -24,30 +25,34 @@ const EditableTable = ({columns, rows}) => {
     setCursor
   }
 
-  console.log(provider)
+  const onDoubleClick = () => {
+    setCursor({...cursor, isEditing: true})
+  }
 
   return (
-    <Context value={provider}>
-      <table className={'editable-table'}>
-        <thead>
-        <tr>
+    <div onDoubleClick={onDoubleClick}>
+      <Context value={provider}>
+        <table className={'editable-table'}>
+          <thead>
+          <tr>
+            {
+              columns.map(column => {
+                return <th key={column.name} style={{width: column.width}}>{column.name}</th>
+              })
+            }
+          </tr>
+          </thead>
+          <tbody>
           {
-            columns.map(column => {
-              return <th key={column.name} style={{width: column.width}}>{column.name}</th>
+            rows.map((row, index) => {
+              return <Row key={index} rowIndex={index}/>
             })
           }
-        </tr>
-        </thead>
-        <tbody>
-        {
-          rows.map((row, index) => {
-            return <Row key={index} rowIndex={index}/>
-          })
-        }
-        </tbody>
-      </table>
-      <CellInput/>
-    </Context>
+          </tbody>
+        </table>
+        <CellInput/>
+      </Context>
+    </div>
   )
 }
 

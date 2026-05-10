@@ -28,7 +28,12 @@ const Cell = ({rowIndex, columnIndex}) => {
   }
 
   return (
-    <td id={`cell-${rowIndex}-${columnIndex}`} onClick={onClick}>{cell}</td>
+    <td
+      id={`cell-${rowIndex}-${columnIndex}`}
+      onClick={onClick}
+    >
+      {cell}
+    </td>
   )
 }
 
