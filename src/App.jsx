@@ -10,30 +10,40 @@ const columns = [
   { name: 'comment', width: '10%' },
 ]
 
-const rows = [
-  {
-    id: 1,
-    product: 'product 1',
-    quantity: 50,
-    price: 10000,
-    amount: 500000,
-    comment: 'this is comment'
-  },
-  {
-    id: 2,
-    product: 'product 2',
-    quantity: 50,
-    price: 10000,
-    amount: 500000,
-    comment: 'this is comment 2'
-  }
-]
-
 function App() {
+  const [rows, setRows] = useState([
+    {
+      id: 1,
+      product: '',
+      quantity: 50,
+      price: 10000,
+      amount: 500000,
+      comment: 'this is comment'
+    },
+    {
+      id: 2,
+      product: 'product 2',
+      quantity: 50,
+      price: 10000,
+      amount: 500000,
+      comment: 'this is comment 2'
+    },
+  ])
+
+  const onInput = ({columnIndex, rowIndex, value}) => {
+    const newRows = [...rows]
+    const colName = columns[columnIndex].name
+    newRows[rowIndex][colName] = value
+    setRows(newRows)
+  }
 
   return (
     <>
-      <EditableTable columns={columns} rows={rows}/>
+      <EditableTable
+        columns={columns}
+        rows={rows}
+        onInput={onInput}
+      />
     </>
   )
 }

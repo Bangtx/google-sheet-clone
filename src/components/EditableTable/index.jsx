@@ -1,16 +1,17 @@
 import './style.sass'
 import { Context } from './store.js'
 import Row from './Row'
-import {useState} from "react";
+import {useRef, useState} from "react";
 import CellInput from "./CellInput.jsx";
 
 
 
-const EditableTable = ({columns, rows}) => {
+const EditableTable = ({columns, rows, onInput}) => {
+  const table = useRef()
 
   const [cursor, setCursor] = useState({
-    top: -1,
-    left: -1,
+    top: -100,
+    left: -100,
     width: 0,
     height: 0,
     rowIndex: -1,
@@ -18,21 +19,28 @@ const EditableTable = ({columns, rows}) => {
     isEditing: false
   })
 
+  const [selectionRegion, setSelectionRegion] = useState({
+    top: -1,
+    left: -1,
+    width: 0,
+    height: 0,
+  })
+
   const provider = {
     columns,
     rows,
     cursor,
-    setCursor
-  }
-
-  const onDoubleClick = () => {
-    setCursor({...cursor, isEditing: true})
+    setCursor,
+    onInput,
+    table,
+    selectionRegion,
+    setSelectionRegion
   }
 
   return (
-    <div onDoubleClick={onDoubleClick}>
+    <div>
       <Context value={provider}>
-        <table className={'editable-table'}>
+        <table className={'editable-table'} ref={table}>
           <thead>
           <tr>
             {
