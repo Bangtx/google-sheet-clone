@@ -3,6 +3,7 @@ import { Context } from './store.js'
 import Row from './Row'
 import {useRef, useState} from "react";
 import CellInput from "./CellInput.jsx";
+import CellSelectionRegion from "./CellSelectionRegion.jsx";
 
 
 
@@ -20,8 +21,8 @@ const EditableTable = ({columns, rows, onInput}) => {
   })
 
   const [selectionRegion, setSelectionRegion] = useState({
-    top: -1,
-    left: -1,
+    top: -10,
+    left: -10,
     width: 0,
     height: 0,
   })
@@ -59,6 +60,7 @@ const EditableTable = ({columns, rows, onInput}) => {
           </tbody>
         </table>
         <CellInput/>
+        <CellSelectionRegion/>
       </Context>
     </div>
   )
