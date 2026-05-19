@@ -1,4 +1,4 @@
-import {useCallback, useContext} from "react";
+import {useCallback, useContext, useEffect} from "react";
 import {Context} from "./store.js";
 
 const Cell = ({rowIndex, columnIndex}) => {
@@ -27,6 +27,10 @@ const Cell = ({rowIndex, columnIndex}) => {
       isEditing: false
     })
   }
+
+  // useEffect(() => {
+  //   console.log(cursor)
+  // }, [cursor]);
 
   // 1. Dùng useCallback để hàm này không bị tạo mới sau mỗi lần render
   const onMouseMove = useCallback((e) => {

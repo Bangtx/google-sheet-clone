@@ -5,15 +5,12 @@ const CellInput = () => {
   const injector = useContext(Context)
   const { columns, rows, cursor, setCursor, onInput } = injector
   const {rowIndex, columnIndex} = cursor
-  const divRef = useRef(null)
 
-  // row = {id: 1, name: 'test', quantity: 2}
+  const inputRef = useRef(null)
+
   const row = rows[rowIndex]
-  // column = {name: 'quantity', text: 'So luong' }
   const column = columns[columnIndex]
-  // columnName = quantity
   const columnName = column?.name
-  // 2
   const cell = columnName ? row[columnName] : ''
 
   const onDoubleClick = () => {
@@ -30,15 +27,11 @@ const CellInput = () => {
     if (!cursor.isEditing) {
       setCursor({ ...cursor, isEditing: true })
     }
-
   }
 
   const moveCursor = (event) => {
-    // event: ArrowUp ArrowLeft ArrowDown ArrowRight
     let newColIndex = cursor.columnIndex
     let newRowIndex = cursor.rowIndex
-
-    console.log('vai dayu', event)
 
     if (!['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event)) return;
 
@@ -78,23 +71,26 @@ const CellInput = () => {
   }
 
   useEffect(() => {
-    if (!cursor.isEditing && cursor.rowIndex !== -1 && divRef.current) {
-      // Dùng preventScroll để tránh trình duyệt bị giật trang khi focus
-      divRef.current.focus({ preventScroll: true });
+    // 2. Sửa điều kiện: Luôn luôn focus vào inputRef mỗi khi vị trí ô hoặc trạng thái chỉnh sửa thay đổi
+    if (cursor.rowIndex !== -1 && inputRef.current) {
+      inputRef.current.focus({ preventScroll: true });
     }
   }, [cursor.rowIndex, cursor.columnIndex, cursor.isEditing])
 
   const onKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && cursor.isEditing) {
       moveCursor('ArrowRight')
+      return
+    }
+
+    if (e.key === 'Enter' && !cursor.isEditing) {
+      setCursor({...cursor, isEditing: true})
       return
     }
 
     moveCursor(e.key)
 
-    // Nếu đang KHÔNG trong chế độ edit, và người dùng gõ một phím ký tự (độ dài 1 như a, b, 1, 2...)
     if (!cursor.isEditing && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-      // 1. Chuyển sang chế độ edit
       setCursor({ ...cursor, isEditing: true })
 
       onInput({
@@ -103,7 +99,6 @@ const CellInput = () => {
         value: cell + e.key
       })
 
-      // Prevent mặc định để input không nhận phím này thành 2 lần gõ
       e.preventDefault()
     }
   }
@@ -111,7 +106,6 @@ const CellInput = () => {
   return (
     <>
       <div
-        ref={divRef}            // Gắn ref
         className={`cell-input`}
         style={{
           top: cursor.top,
@@ -122,8 +116,8 @@ const CellInput = () => {
       >
         {
           cursor.rowIndex !== -1
-          && <
-            input
+          && <input
+            ref={inputRef}
             onKeyDown={onKeyDown}
             onDoubleClick={onDoubleClick}
             value={cell}
@@ -134,20 +128,14 @@ const CellInput = () => {
               height: '100%',
               outline: 'none',
               border: 'none',
-              // fontSize: '16px',
-              // paddingLeft: '2px',
-              pointerEvents: 'auto', // Để input nhận được double click
-
-              // Trick mấu chốt: Ẩn đi khi chưa edit, nhưng không gỡ khỏi DOM
+              pointerEvents: 'auto',
               opacity: cursor.isEditing ? 1 : 0,
               backgroundColor: cursor.isEditing ? '#fff' : 'transparent',
             }}
           />
         }
       </div>
-
     </>
-
   )
 }
 
